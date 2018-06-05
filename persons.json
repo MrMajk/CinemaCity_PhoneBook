@@ -1,0 +1,14 @@
+{
+  "persons":[
+  {
+    "name": "John",
+    "phone": "7455",
+    "email": "wrw@test.pl"
+  },
+  {
+    "name": "sdf",
+    "phone": "2342",
+    "email": "fdgdc@test.pl"
+  }
+    ]
+}
