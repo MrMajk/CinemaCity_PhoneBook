@@ -23,11 +23,11 @@
                 <th>Action</th>
             </tr>
             </thead>
-            <tbody v-for="person in dataPersons">
+            <tbody v-for="user in users">
             <tr>
-                <td>{{person.name}}</td>
-                <td>{{person.phone}}</td>
-                <td>{{person.email}}</td>
+                <td>{{user.name}}</td>
+                <td>{{user.phone}}</td>
+                <td>{{user.email}}</td>
                 <td><span class="glyphicon glyphicon-trash"></span></td>
             </tr>
             </tbody>
@@ -38,38 +38,25 @@
 
 <script>
     import addNewRow from './AddNewRow.vue'
-    import axios from 'axios'
-
-    var config = require('./../../persons.json');
-
     export default {
-        name: 'hello',
         data() {
             return {
-                dataPersons: config.persons
+                users:{}
             }
         },
         components: {
             addNewRow: addNewRow
         },
 
-        methods: {
             created() {
-
-                axios({
-                    method: 'post',
-                    url: 'http://localhost:8080/add',
-                    data: {
-                        name: this.config.persons.name,
-                        phone: this.config.persons.phone,
-                        email: this.config.persons.email
-                    }
-                });
-
-            }
-        }
+                let self = this;
+                    fetch('https://jsonplaceholder.typicode.com/users')
+                        .then(function (result) {
+                           result.json().then(function (data) {
+                                self.users= data;
+                           })
+                        });
+                }
     }
-      //  var config = require('./../../persons.json');
-
 
 </script>

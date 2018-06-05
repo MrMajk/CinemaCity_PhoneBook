@@ -10,22 +10,25 @@
                 </div>
                 <div class="modal-body">
                     <form>
-                        <div class="form-group">
+                        <div class="form-group" :class="{'has-error' : errors.has('nameInput')}">
                             <label for="nameInput">Full name</label>
-                            <input type="text" class="form-control" id="nameInput" placeholder="Enter full name" v-model="list.name">
+                            <input type="text" class="form-control" name="nameInput"  placeholder="Enter full name" v-model="list.name"
+                                   v-validate="{required:true,min:3,max:30}">
+                            <span>{{ errors.first('nameInput') }}</span>
+
                         </div>
                         <div class="form-group">
                             <label for="phoneInput">Phone</label>
-                            <input type="text" class="form-control" id="phoneInput" placeholder="Enter phone" v-model="list.phone">
+                            <input type="number" class="form-control" name="phoneInput" required placeholder="Enter phone" v-model="list.phone" required>
                         </div>
                         <div class="form-group">
                             <label for="exampleInputEmail1">Email address</label>
-                            <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email" v-model="list.email">
+                            <input type="email" class="form-control" name="exampleInputEmail1" required aria-describedby="emailHelp" placeholder="Enter email" v-model="list.email" required>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary" @click.prevent="save">Submit</button>
+                    <button type="submit" class="btn btn-primary" @click="$validator.validateAll()">Submit</button>
                 </div>
             </div>
 
@@ -53,22 +56,25 @@ import axios from 'axios';
 
 
         methods: {
+            validateForm(){
+                var error = false;
+                if (this.list.name == ''){
+                    error = true;
+                }
+
+                if (error){
+                    return false;
+                } else {
+                    this.save();
+                }
+            },
             save(){
-                var jsonData = require('./../../persons.json');
-//
-                jsonData.persons.push(this.$data.list);
-//                this.$router.push('/add')
-//                console.log( jsonData.persons);
-
-
-//                var xhttp = new XMLHttpRequest();
-//                xhttp.open("POST", "https://jsonplaceholder.typicode.com/posts");
-//                xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-//
-//                xhttp.send(JSON.stringify({ name: "hello@user.com", phone: "33453",  email: "Tester" }));
-//                console.log( xhttp);
+                this.$parent.users.push({
+                    name: this.list.name,
+                    phone: this.list.phone,
+                    email: this.list.email
+                });
             }
-
         }
     }
 

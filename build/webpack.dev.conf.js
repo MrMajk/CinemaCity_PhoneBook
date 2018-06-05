@@ -42,7 +42,17 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     quiet: true, // necessary for FriendlyErrorsPlugin
     watchOptions: {
       poll: config.dev.poll,
-    }
+    },
+
+      setup(app){
+          setup: (app) => {
+              app.post('/add', (req, res) => {
+                console.log('1111');
+                  res.redirect(req.originalUrl);
+              });
+          }
+      }
+
   },
   plugins: [
     new webpack.DefinePlugin({
