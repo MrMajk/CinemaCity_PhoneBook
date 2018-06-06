@@ -12,23 +12,32 @@
                     <form>
                         <div class="form-group" :class="{'has-error' : errors.has('nameInput')}">
                             <label for="nameInput">Full name</label>
-                            <input type="text" class="form-control" name="nameInput"  placeholder="Enter full name" v-model="list.name"
+                            <input type="text" class="form-control" name="nameInput" placeholder="Enter full name"
+                                   v-model="list.name"
                                    v-validate="{required:true,min:3,max:30}">
                             <span>{{ errors.first('nameInput') }}</span>
+                        </div>
+                        <div class="form-group" :class="{'has-error' : errors.has('phoneInput')}">
+                            <label for="phoneInput">Phone</label>
+                            <input type="number" class="form-control" name="phoneInput" placeholder="Enter phone"
+                                   v-model="list.phone"
+                                    v-validate="{required:true,min:6,max:12}">
+                            <span>{{ errors.first('phoneInput') }}</span>
 
                         </div>
-                        <div class="form-group">
-                            <label for="phoneInput">Phone</label>
-                            <input type="number" class="form-control" name="phoneInput" required placeholder="Enter phone" v-model="list.phone" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="exampleInputEmail1">Email address</label>
-                            <input type="email" class="form-control" name="exampleInputEmail1" required aria-describedby="emailHelp" placeholder="Enter email" v-model="list.email" required>
+                        <div class="form-group" :class="{'has-error' : errors.has('phoneInput')}">
+                            <label for="emailInput">Email address</label>
+                            <input type="email" class="form-control" name="emailInput"
+                                   aria-describedby="emailHelp" placeholder="Enter email"
+                                   v-model="list.email"
+                                   v-validate="'required|email'">
+                            <span>{{ errors.first('emailInput') }}</span>
+
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary" @click="$validator.validateAll()">Submit</button>
+                    <button type="submit" class="btn btn-primary" @click="save()">Submit</button>
                 </div>
             </div>
 
@@ -37,7 +46,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 
     export default {
 
@@ -56,29 +64,19 @@ import axios from 'axios';
 
 
         methods: {
-            validateForm(){
-                var error = false;
-                if (this.list.name == ''){
-                    error = true;
-                }
-
-                if (error){
-                    return false;
-                } else {
-                    this.save();
-                }
-            },
             save(){
-                this.$parent.users.push({
-                    name: this.list.name,
-                    phone: this.list.phone,
-                    email: this.list.email
-                });
+               this.$validator.validateAll().then(result => {
+                  if (result){
+                      this.$parent.users.push({
+                          name: this.list.name,
+                          phone: this.list.phone,
+                          email: this.list.email
+                      });
+                  }
+               });
             }
         }
     }
-
-
 
 
 </script>
