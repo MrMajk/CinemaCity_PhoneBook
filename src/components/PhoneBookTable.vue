@@ -1,53 +1,71 @@
 <template>
     <div class="container">
-        <div class="col-md-6">
-
-            <div id="custom-search-input">
-                <div class="input-group col-md-12">
-                    <input type="text" class="form-control input-lg" placeholder="Buscar" v-model="search"/>
-                    <span class="input-group-btn">
-                        <button class="btn btn-info btn-lg" type="button">
-                            <i class="glyphicon glyphicon-search"></i>
-                        </button>
-                    </span>
+        <div class="col-xs-12 upTablePanel">
+                <div class="input-group col-xs-12">
+                    <input type="text" class="form-control input-lg upTablePanel__searchInput"
+                           placeholder="Search user..." v-model="search"/>
                 </div>
-            </div>
         </div>
-        <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Add</button>
-        <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#editModal">Edit</button>
-
-        <table class="table table-bordered">
-            <thead>
+        <table class="table table-bordered usersTable">
+            <thead class="usersTable__header">
                 <tr>
                     <th v-for="key in gridColumns"
+                        class="usersTable__header--text"
                         @click="sortBy(key)"
-                        :class="{ active: sortKey == key }">
-                        <span class="arrow">
-                            {{ key }}
-                         </span>
+                        :class="{ active: sortKey == key, 'hidden-xs': key=='email' }">
+                            <span>
+                                {{ key }}
+                                <span class="glyphicon glyphicon-sort-by-alphabet"></span>
+                             </span>
                     </th>
+                    <th class="usersTable__header--text">actions</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr v-for="user,index in filteredList">
-                    <td v-for="key in gridColumns">
-                        {{user[key]}}
-                    </td>
-                    <td>
-                        <button type="button" class="btn btn-xs btn-danger" @click="deleteUser(index)">
-                            <span class="glyphicon glyphicon-trash"></span>&nbsp;
-                        </button>
-                        <button type="button" class="btn btn-xs" data-toggle="modal" data-target="#editModal"
-                                data-userId=user.id   @click="editUserMethod(user)">
-                            <span class="glyphicon glyphicon-edit"></span>&nbsp;
-                        </button>
-                    </td>
-                </tr>
+            <tbody class="usersTable__body">
+            <tr class="usersTable__body--row" v-for="user,index in filteredList">
+                <td v-for="key in gridColumns"
+                    :class="{'hidden-xs': key=='email'}">
+                    {{user[key]}}
+                </td>
+                <td>
+                    <button type="button" class="btn btn-xs btn-danger" @click="deleteUser(user.id)">
+                        <span class="glyphicon glyphicon-trash"></span>&nbsp;
+                    </button>
+                    <button type="button" class="btn btn-xs" data-toggle="modal" data-target="#editModal"
+                            @click="editUserMethod(user)">
+                        <span class="glyphicon glyphicon-edit"></span>&nbsp;
+                    </button>
+                </td>
+            </tr>
             </tbody>
         </table>
-        <pagination>
-            v-on:page:update="updatePage"
-        </pagination>
+        <nav>
+            <ul class="pagination tablePagination">
+                <li class="page-item tablePagination__element">
+                    <a class="page-link pagination-btn tablePagination__element--link" v-if="showPreviousLink()" @click="updatePage(currentPage - 1)">
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                </li>
+                <li class="page-item tablePagination__element">
+                    <span class="page-link tablePagination__element--link">
+                        {{ this.currentPage + 1 }} of {{ this.pagesCount }}
+                    </span>
+                </li>
+                <li class="page-item tablePagination__element">
+                    <a class="page-link pagination-btn tablePagination__element--link" v-if="showNextLink()" @click="updatePage(currentPage + 1 )">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <div class="col-xs-12">
+            <button type="button" class="btn btn-info btn-lg upTablePanel__addButton" data-toggle="modal"
+                    data-target="#myModal">
+                Add new user
+            </button>
+        </div>
         <addNewRow></addNewRow>
         <edit-user></edit-user>
     </div>
@@ -56,7 +74,6 @@
 <script>
     import addNewRow from './AddNewRow.vue'
     import editUser from './EditUser.vue'
-    import pagination from './Pagination.vue'
 
     export default {
         data() {
@@ -72,13 +89,18 @@
                 sortKey: '',
                 currentPage: 0,
                 pageSize: 6,
-                visibleUsers: []
+                visibleUsers: [],
+                editUser: [],
+                filteredUsersList: [],
+                pagesCount: this.totalPages(),
+                userEditData: []
+
+
             }
         },
         components: {
             addNewRow: addNewRow,
             editUser: editUser,
-            pagination: pagination
         },
         created() {
             let self = this;
@@ -86,58 +108,73 @@
                 .then(function (result) {
                     result.json().then(function (data) {
                         self.users = data;
+                        self.filteredUsersList = data;
                     })
                 });
 
         },
-        beforeMount:function() {
-            this.updateVisibleUsers();
-        },
+
         computed: {
             filteredList: function () {
                 this.updateVisibleUsers();
 
-                var sortKey = this.sortKey
-                var filterKey = this.search && this.search.toLowerCase()
-                var data = this.visibleUsers;
+                var sortKey = this.sortKey;
+                var filterKey = this.search && this.search.toLowerCase();
+                var data = this.users;
+                var dataVisbile = this.visibleUsers;
                 if (filterKey) {
                     data = data.filter(function (row) {
                         return Object.keys(row).some(function (key) {
                             return String(row[key]).toLowerCase().indexOf(filterKey) > -1
-                        })
-                    })
+                        });
+                    });
+                    this.filteredUsersList = data;
+
+                    this.visibleUsers = this.filteredUsersList.filter(function (row) {
+                        return Object.keys(row).some(function (key) {
+                            return String(row[key]).toLowerCase().indexOf(filterKey) > -1
+                        });
+                    });
+                    this.updateVisibleUsers();
+
+                } else {
+                    this.filteredUsersList = this.users;
+                    this.updateVisibleUsers();
                 }
                 if (sortKey) {
-                    return data.sort((a, b) => {
+
+                    this.filteredUsersList = this.filteredUsersList.sort((a, b) => {
                         let modifier = 1;
                         if (this.currentSortDir === 'desc') modifier = -1;
                         if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
                         if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
                         return 0;
                     });
+                    this.updateVisibleUsers();
+
                 }
-                return data = this.visibleUsers;
+                this.totalPages();
+
+                return this.visibleUsers;
 
             }
 
-            },
-            sortedCats: function () {
-                return this.users.sort((a, b) => {
-                    let modifier = 1;
-                    if (this.currentSortDir === 'desc') modifier = -1;
-                    if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
-                    if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
-                    return 0;
-                });
+        },
+        sortedCats: function () {
+            return this.users.sort((a, b) => {
+                let modifier = 1;
+                if (this.currentSortDir === 'desc') modifier = -1;
+                if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
+                if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
+                return 0;
+            });
 
         },
 
         methods: {
-
-            deleteUser(index){
-                if (confirm("Are you sure ?")) {
-                    this.users.splice(index, 1);
-                }
+            deleteUser(userID){
+                let i = this.users.map(item => item.id).indexOf(userID);
+                this.$delete(this.users, i);
             },
             sortBy: function (key) {
                 this.sortKey = key;
@@ -147,17 +184,36 @@
                 }
                 this.currentSort = key;
             },
-            updatePage(pageNumber){
+            updatePage: function (pageNumber) {
                 this.currentPage = pageNumber;
                 this.updateVisibleUsers();
             },
-            updateVisibleUsers:function() {
-                this.visibleUsers = this.users.slice(this.currentPage * this.pageSize, (this.currentPage * this.pageSize) + this.pageSize);
+            updateVisibleUsers: function () {
+                this.visibleUsers = this.filteredUsersList.slice(this.currentPage * this.pageSize, (this.currentPage * this.pageSize) + this.pageSize);
                 if (this.visibleUsers.length == 0 && this.currentPage > 0) {
                     this.updatePage(this.currentPage - 1);
                 }
+            },
+            editUserMethod: function (userEdit) {
+                this.editUser = userEdit;
+                this.userEditData = userEdit;
+            },
+            totalPages: function () {
+                if (this.filteredUsersList) {
+                  return this.pagesCount = Math.ceil(this.filteredUsersList.length / this.pageSize);
+                }
+            },
+            showPreviousLink() {
+                return this.currentPage == 0 ? false : true;
+            },
+            showNextLink() {
+                return this.currentPage == (this.totalPages() - 1) ? false : true;
             }
         }
     }
 
 </script>
+
+<style lang="scss">
+
+</style>

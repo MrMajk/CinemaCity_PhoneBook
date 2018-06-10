@@ -1,0 +1,11 @@
+.upTablePanel{
+  margin-bottom: 20px;
+    &__searchInput{
+      background-color: $searchInputBgc;
+      color: $searchInputFontColor;
+    }
+    &__addButton{
+      background-color: $addUserButtonBgc;
+      color: $addUserButtonFont;
+    }
+}

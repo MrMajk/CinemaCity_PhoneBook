@@ -1,0 +1,17 @@
+.usersTable{
+  &__header{
+    background-color: $tableHeaderBgc;
+    text-transform: uppercase;
+      &--text{
+        text-align: center;
+      }
+  }
+  &__body{
+    &--row{
+      background-color: $rowBcg;
+      &:hover{
+        background-color: $rowBcgHover;
+      }
+    }
+  }
+}

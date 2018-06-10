@@ -4,7 +4,7 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import VeeValidate from 'vee-validate';
-
+import './sass/index.scss'
 Vue.config.productionTip = false;
 
 Vue.use(VeeValidate);

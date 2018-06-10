@@ -9,19 +9,20 @@
                     <h4 class="modal-title">Modal Header</h4>
                 </div>
                 <div class="modal-body">
-                    <form>
+
+                    <form action="url" method="POST" enctype="multipart/form-data">
                         <div class="form-group" :class="{'has-error' : errors.has('nameInput')}">
                             <label for="nameInput">Full name</label>
                             <input type="text" class="form-control" name="nameInput" placeholder="Enter full name"
-                                   value="" v-model="editList.name"
-                                   v-validate="{required:true,min:3,max:30}">
+                                   v-model="$parent.editUser.name"
+                                   v-validate="{required:true,min:3,max:80}">
                             <span>{{ errors.first('nameInput') }}</span>
                         </div>
                         <div class="form-group" :class="{'has-error' : errors.has('phoneInput')}">
                             <label for="phoneInput">Phone</label>
-                            <input type="number" class="form-control" name="phoneInput" placeholder="Enter phone"
-                                   v-model="editList.phone"
-                                   v-validate="{required:true,min:6,max:12}">
+                            <input type="text" class="form-control" name="phoneInput" placeholder="Enter phone"
+                                   v-model="$parent.editUser.phone"
+                                   v-validate="{required:true,min:6,max:30}">
                             <span>{{ errors.first('phoneInput') }}</span>
 
                         </div>
@@ -29,7 +30,7 @@
                             <label for="emailInput">Email address</label>
                             <input type="email" class="form-control" name="emailInput"
                                    aria-describedby="emailHelp" placeholder="Enter email"
-                                   v-model="editList.email"
+                                   v-model="$parent.editUser.email"
                                    v-validate="'required|email'">
                             <span>{{ errors.first('emailInput') }}</span>
 
@@ -37,7 +38,7 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary" @click="save()">Submit</button>
+                    <button type="submit" class="btn btn-primary"  @click="save()">Submit</button>
                 </div>
             </div>
 
@@ -47,30 +48,15 @@
 
 <script>
     export default {
-
-        data(){
-            return {
-                editList: {
-                    name: '',
-                    phone: '',
-                    email: ''
-                }
-            }
-        },
-
-
         methods: {
             save(){
                 this.$validator.validateAll().then(result => {
                     if (result){
-                        this.$parent.users.push({
-                            name: this.list.name,
-                            phone: this.list.phone,
-                            email: this.list.email
-                        });
                     }
+
                 });
             }
+
         }
     }
 

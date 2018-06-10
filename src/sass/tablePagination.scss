@@ -1,0 +1,7 @@
+.tablePagination{
+  &__element{
+    &--link{
+      background-color: $paginationBgc !important;
+    }
+  }
+}
