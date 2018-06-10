@@ -94,8 +94,6 @@
                 filteredUsersList: [],
                 pagesCount: this.totalPages(),
                 userEditData: []
-
-
             }
         },
         components: {
@@ -111,7 +109,6 @@
                         self.filteredUsersList = data;
                     })
                 });
-
         },
 
         computed: {
@@ -121,7 +118,6 @@
                 var sortKey = this.sortKey;
                 var filterKey = this.search && this.search.toLowerCase();
                 var data = this.users;
-                var dataVisbile = this.visibleUsers;
                 if (filterKey) {
                     data = data.filter(function (row) {
                         return Object.keys(row).some(function (key) {
@@ -142,7 +138,6 @@
                     this.updateVisibleUsers();
                 }
                 if (sortKey) {
-
                     this.filteredUsersList = this.filteredUsersList.sort((a, b) => {
                         let modifier = 1;
                         if (this.currentSortDir === 'desc') modifier = -1;
@@ -151,12 +146,9 @@
                         return 0;
                     });
                     this.updateVisibleUsers();
-
                 }
                 this.totalPages();
-
                 return this.visibleUsers;
-
             }
 
         },
@@ -168,7 +160,6 @@
                 if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
                 return 0;
             });
-
         },
 
         methods: {
@@ -196,7 +187,6 @@
             },
             editUserMethod: function (userEdit) {
                 this.editUser = userEdit;
-                this.userEditData = userEdit;
             },
             totalPages: function () {
                 if (this.filteredUsersList) {
@@ -211,9 +201,4 @@
             }
         }
     }
-
 </script>
-
-<style lang="scss">
-
-</style>

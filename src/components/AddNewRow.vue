@@ -1,8 +1,6 @@
 <template>
     <div id="myModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
-
-            <!-- Modal content-->
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -21,7 +19,7 @@
                             <label for="phoneInput">Phone</label>
                             <input type="number" class="form-control" name="phoneInput" placeholder="Enter phone"
                                    v-model="list.phone"
-                                    v-validate="{required:true,min:6,max:12}">
+                                    v-validate="{required:true,min:6,max:30}">
                             <span>{{ errors.first('phoneInput') }}</span>
 
                         </div>
@@ -32,7 +30,6 @@
                                    v-model="list.email"
                                    v-validate="'required|email'">
                             <span>{{ errors.first('emailInput') }}</span>
-
                         </div>
                     </form>
                 </div>
@@ -40,7 +37,6 @@
                     <button type="submit" class="btn btn-primary" @click="save()">Submit</button>
                 </div>
             </div>
-
         </div>
     </div>
 </template>
@@ -48,10 +44,6 @@
 <script>
 
     export default {
-
-
-        name: "AddNewRow",
-
         data(){
             return {
                 list: {
@@ -62,7 +54,6 @@
             }
         },
 
-
         methods: {
             save(){
                this.$validator.validateAll().then(result => {
@@ -72,15 +63,11 @@
                           phone: this.list.phone,
                           email: this.list.email
                       });
+                      $('#myModal').modal('hide');
                   }
                });
             }
         }
     }
 
-
 </script>
-
-<style scoped>
-
-</style>

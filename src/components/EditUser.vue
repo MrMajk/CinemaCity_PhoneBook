@@ -1,15 +1,12 @@
 <template>
     <div id="editModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
-
-            <!-- Modal content-->
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Modal Header</h4>
+                    <h4 class="modal-title">Edit user</h4>
                 </div>
                 <div class="modal-body">
-
                     <form action="url" method="POST" enctype="multipart/form-data">
                         <div class="form-group" :class="{'has-error' : errors.has('nameInput')}">
                             <label for="nameInput">Full name</label>
@@ -38,7 +35,7 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary"  @click="save()">Submit</button>
+                    <button type="submit" class="btn btn-primary" @click="save()">Submit</button>
                 </div>
             </div>
 
@@ -51,18 +48,11 @@
         methods: {
             save(){
                 this.$validator.validateAll().then(result => {
-                    if (result){
+                    if (result) {
+                        $('#editModal').modal('hide');
                     }
-
                 });
             }
-
         }
     }
-
-
 </script>
-
-<style scoped>
-
-</style>
